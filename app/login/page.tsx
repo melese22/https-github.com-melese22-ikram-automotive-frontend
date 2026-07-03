@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import toast from 'react-hot-toast';
@@ -114,6 +115,14 @@ export default function LoginPage() {
             >
               {loading ? 'Processing...' : isRegister ? 'Create Account' : 'Sign In'}
             </button>
+
+            {!isRegister && (
+              <p className="text-center text-sm text-gray-500">
+                <Link href="/forgot-password" className="text-primary-600 hover:text-primary-700 font-medium">
+                  Forgot password?
+                </Link>
+              </p>
+            )}
           </form>
         </div>
       </div>
