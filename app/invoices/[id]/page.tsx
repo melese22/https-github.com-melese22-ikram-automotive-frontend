@@ -1,12 +1,13 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import Navbar from '@/components/Navbar';
 import { DetailSkeleton } from '@/components/Skeleton';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { useEffect } from 'react';
 
 const statusStyles: Record<string, string> = {
   DRAFT: 'bg-gray-100 text-gray-700',
@@ -36,6 +37,24 @@ export default function InvoiceDetailPage() {
     enabled: !!user,
   });
 
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('paid') === 'pending') {
+      const check = setInterval(async () => {
+        try {
+          const { data } = await api.get(`/invoices/${id}/payment-status`);
+          if (data.status === 'PAID') {
+            clearInterval(check);
+            queryClient.invalidateQueries({ queryKey: ['invoice', id] });
+            toast.success('Payment confirmed!');
+          }
+        } catch {}
+      }, 5000);
+      return () => clearInterval(check);
+    }
+  }, [id, searchParams, queryClient]);
+
   const updateStatus = useMutation({
     mutationFn: async ({ status, paidAt }: { status: string; paidAt?: string }) => {
       const { data } = await api.patch(`/invoices/${id}/status`, { status, paidAt });
@@ -47,6 +66,17 @@ export default function InvoiceDetailPage() {
       toast.success('Invoice status updated!');
     },
     onError: (err: any) => toast.error(err.response?.data?.error || 'Failed to update'),
+  });
+
+  const payChapa = useMutation({
+    mutationFn: async () => {
+      const { data } = await api.post(`/invoices/${id}/pay`);
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.checkoutUrl) window.location.href = data.checkoutUrl;
+    },
+    onError: (err: any) => toast.error(err.response?.data?.error || 'Payment initiation failed'),
   });
 
   if (isLoading) {
@@ -181,40 +211,52 @@ export default function InvoiceDetailPage() {
           </div>
         )}
 
-        {canManage && (
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Actions</h3>
-            <div className="flex gap-3">
-              {inv.status === 'DRAFT' && (
-                <button
-                  onClick={() => updateStatus.mutate({ status: 'ISSUED' })}
-                  disabled={updateStatus.isPending}
-                  className="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
-                >
-                  {updateStatus.isPending ? 'Updating...' : 'Issue Invoice'}
-                </button>
-              )}
-              {inv.status === 'ISSUED' && (
-                <button
-                  onClick={() => updateStatus.mutate({ status: 'PAID', paidAt: new Date().toISOString() })}
-                  disabled={updateStatus.isPending}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50"
-                >
-                  {updateStatus.isPending ? 'Updating...' : 'Mark as Paid'}
-                </button>
-              )}
-              {inv.status !== 'CANCELLED' && inv.status !== 'PAID' && (
-                <button
-                  onClick={() => updateStatus.mutate({ status: 'CANCELLED' })}
-                  disabled={updateStatus.isPending}
-                  className="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-200 disabled:opacity-50"
-                >
-                  {updateStatus.isPending ? 'Updating...' : 'Cancel Invoice'}
-                </button>
-              )}
-            </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">Actions</h3>
+          <div className="flex gap-3 flex-wrap">
+            {canManage && inv.status === 'DRAFT' && (
+              <button
+                onClick={() => updateStatus.mutate({ status: 'ISSUED' })}
+                disabled={updateStatus.isPending}
+                className="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
+              >
+                {updateStatus.isPending ? 'Updating...' : 'Issue Invoice'}
+              </button>
+            )}
+            {canManage && inv.status === 'ISSUED' && (
+              <button
+                onClick={() => updateStatus.mutate({ status: 'PAID', paidAt: new Date().toISOString() })}
+                disabled={updateStatus.isPending}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50"
+              >
+                {updateStatus.isPending ? 'Updating...' : 'Mark as Paid'}
+              </button>
+            )}
+            {inv.status === 'ISSUED' && (
+              <button
+                onClick={() => payChapa.mutate()}
+                disabled={payChapa.isPending}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2"
+              >
+                {payChapa.isPending ? 'Processing...' : 'Pay with Chapa'}
+                {!payChapa.isPending && (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                )}
+              </button>
+            )}
+            {canManage && inv.status !== 'CANCELLED' && inv.status !== 'PAID' && (
+              <button
+                onClick={() => updateStatus.mutate({ status: 'CANCELLED' })}
+                disabled={updateStatus.isPending}
+                className="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-200 disabled:opacity-50"
+              >
+                {updateStatus.isPending ? 'Updating...' : 'Cancel Invoice'}
+              </button>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="mt-6 text-center">
           <button
