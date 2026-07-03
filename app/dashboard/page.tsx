@@ -1,7 +1,8 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/lib/auth';
+import { useSocket } from '@/lib/socket';
 import Navbar from '@/components/Navbar';
 import JobCardCard from '@/components/JobCardCard';
 import { StatCardSkeleton, CardSkeleton, SkeletonBlock } from '@/components/Skeleton';
@@ -13,11 +14,34 @@ export default function DashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
+  const queryClient = useQueryClient();
+  const { socket, connected } = useSocket();
+
   useEffect(() => {
     if (!loading && (!user || user.role === 'Customer')) {
       router.push(user ? '/job-cards' : '/login');
     }
   }, [user, loading, router]);
+
+  useEffect(() => {
+    if (!socket) return;
+    const invalidate = () => {
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['job-cards', 'active'] });
+    };
+    socket.on('jobCard:created', invalidate);
+    socket.on('jobCard:statusChanged', invalidate);
+    socket.on('jobCard:assigned', invalidate);
+    socket.on('appointment:created', invalidate);
+    socket.on('appointment:statusChanged', invalidate);
+    return () => {
+      socket.off('jobCard:created', invalidate);
+      socket.off('jobCard:statusChanged', invalidate);
+      socket.off('jobCard:assigned', invalidate);
+      socket.off('appointment:created', invalidate);
+      socket.off('appointment:statusChanged', invalidate);
+    };
+  }, [socket, queryClient]);
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboard-stats'],
@@ -26,7 +50,7 @@ export default function DashboardPage() {
       return data;
     },
     enabled: !!user && user.role !== 'Customer',
-    refetchInterval: 30000,
+    refetchInterval: connected ? false : 30000,
   });
 
   const { data: activeData, isLoading: activeLoading } = useQuery({
@@ -36,7 +60,7 @@ export default function DashboardPage() {
       return data.jobCards;
     },
     enabled: !!user && user.role !== 'Customer',
-    refetchInterval: 15000,
+    refetchInterval: connected ? false : 15000,
   });
 
   if (loading) {
