@@ -26,40 +26,6 @@ export default function Navbar() {
               Ikram Automotive
             </h1>
             <div className="hidden sm:flex gap-4">
-              {user.role === 'SuperAdmin' && (
-                <>
-                  <button
-                    onClick={() => router.push('/superadmin')}
-                    className="text-sm font-semibold text-primary-600 hover:text-primary-700"
-                  >
-                    SuperAdmin
-                  </button>
-                  <button
-                    onClick={() => router.push('/dashboard')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Dashboard
-                  </button>
-                  <button
-                    onClick={() => router.push('/job-cards')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Job Cards
-                  </button>
-                  <button
-                    onClick={() => router.push('/inventory')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Inventory
-                  </button>
-                  <button
-                    onClick={() => router.push('/reports')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Reports
-                  </button>
-                </>
-              )}
               {user.role === 'Customer' ? (
                 <>
                   <button
@@ -83,6 +49,14 @@ export default function Navbar() {
                 </>
               ) : (
                 <>
+                  {user.role === 'SuperAdmin' && (
+                    <button
+                      onClick={() => router.push('/superadmin')}
+                      className="text-sm font-semibold text-primary-600 hover:text-primary-700"
+                    >
+                      SuperAdmin
+                    </button>
+                  )}
                   <button
                     onClick={() => router.push('/dashboard')}
                     className="text-sm text-gray-600 hover:text-gray-900"
