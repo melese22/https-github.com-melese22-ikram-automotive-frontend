@@ -9,6 +9,16 @@ import { StatCardSkeleton, CardSkeleton, SkeletonBlock } from '@/components/Skel
 import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import {
+  HiOutlineWrenchScrewdriver,
+  HiOutlineClock,
+  HiOutlinePlayCircle,
+  HiOutlineUsers,
+  HiOutlineTruck,
+  HiOutlineCurrencyDollar,
+  HiOutlineFire,
+  HiOutlineArrowTrendingUp,
+} from 'react-icons/hi2';
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
@@ -82,41 +92,64 @@ export default function DashboardPage() {
   const statusCounts: Record<string, number> = {};
   sb.forEach((s: any) => { statusCounts[s.status] = s.count; });
 
+  const statDefs = [
+    { label: 'Active Jobs', count: stats?.activeJobs || 0, color: 'from-indigo-500 to-indigo-600', icon: HiOutlineWrenchScrewdriver },
+    { label: 'Pending', count: statusCounts.PENDING || 0, color: 'from-amber-500 to-yellow-600', icon: HiOutlineClock },
+    { label: 'In Progress', count: statusCounts.IN_PROGRESS || 0, color: 'from-blue-500 to-blue-600', icon: HiOutlinePlayCircle },
+    { label: 'Customers', count: stats?.totalCustomers || 0, color: 'from-emerald-500 to-emerald-600', icon: HiOutlineUsers },
+    { label: 'Vehicles', count: stats?.totalVehicles || 0, color: 'from-purple-500 to-purple-600', icon: HiOutlineTruck },
+    { label: 'Revenue', count: `$${Math.round(stats?.revenue?.total || 0).toLocaleString()}`, color: 'from-green-500 to-green-600', icon: HiOutlineCurrencyDollar },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Workshop Dashboard</h2>
-          <p className="text-gray-500 mt-1">Real-time overview of workshop activity</p>
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center shadow-sm">
+            <HiOutlineFire className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Workshop Dashboard</h2>
+            <p className="text-sm text-gray-500">Real-time overview of workshop activity</p>
+          </div>
         </div>
 
         {statsLoading ? (
           <StatCardSkeleton count={6} />
         ) : (
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
-          <StatCard label="Active Jobs" count={stats?.activeJobs || 0} color="indigo" />
-          <StatCard label="Pending" count={statusCounts.PENDING || 0} color="yellow" />
-          <StatCard label="In Progress" count={statusCounts.IN_PROGRESS || 0} color="blue" />
-          <StatCard label="Customers" count={stats?.totalCustomers || 0} color="green" />
-          <StatCard label="Vehicles" count={stats?.totalVehicles || 0} color="purple" />
-          <StatCard label="Revenue" count={`$${Math.round(stats?.revenue?.total || 0).toLocaleString()}`} color="green" />
+          {statDefs.map(({ label, count, color, icon: Icon }) => (
+            <div key={label} className="relative bg-white rounded-2xl border border-gray-200/80 p-4 hover:shadow-md transition-shadow overflow-hidden group">
+              <div className={`absolute top-0 right-0 w-20 h-20 -mr-5 -mt-5 rounded-full bg-gradient-to-br ${color} opacity-[0.07] group-hover:opacity-[0.12] transition-opacity`} />
+              <div className="flex items-start justify-between mb-2">
+                <div className={`p-2 rounded-lg ${color.replace('from-', 'bg-').split(' ')[0]} bg-opacity-10`}>
+                  <Icon className={`w-4 h-4 ${color.replace('from-', 'text-').replace('-500', '-600').split(' ')[0]}`} />
+                </div>
+              </div>
+              <div className="text-xl font-bold text-gray-900">{count}</div>
+              <div className="text-[11px] font-medium text-gray-500 uppercase tracking-wider">{label}</div>
+            </div>
+          ))}
         </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <HiOutlineWrenchScrewdriver className="w-5 h-5 text-indigo-500" />
               Active Bays ({activeData?.length || 0})
             </h3>
             {activeLoading ? (
               <CardSkeleton count={4} />
             ) : activeData?.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                <p className="text-gray-500">No active job cards. All bays are clear.</p>
+              <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300">
+                <HiOutlineWrenchScrewdriver className="w-10 h-10 mx-auto text-gray-300 mb-3" />
+                <p className="text-gray-500 font-medium">No active job cards</p>
+                <p className="text-gray-400 text-sm mt-1">All bays are clear.</p>
                 <button
                   onClick={() => router.push('/job-cards')}
-                  className="mt-3 text-primary-600 hover:text-primary-700 text-sm font-medium"
+                  className="mt-4 text-primary-600 hover:text-primary-700 text-sm font-medium underline"
                 >
                   Create a job card
                 </button>
@@ -144,8 +177,11 @@ export default function DashboardPage() {
             </div>
           ) : (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Mechanics</h3>
-            <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <HiOutlineArrowTrendingUp className="w-5 h-5 text-emerald-500" />
+              Top Mechanics
+            </h3>
+            <div className="bg-white rounded-xl border border-gray-200/80 divide-y divide-gray-100">
               {stats?.topMechanics?.length === 0 ? (
                 <div className="p-4 text-sm text-gray-400">No data yet.</div>
               ) : (
@@ -174,8 +210,11 @@ export default function DashboardPage() {
             </div>
           ) : (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-4">Recent Jobs</h3>
-            <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-4 flex items-center gap-2">
+              <HiOutlineClock className="w-5 h-5 text-blue-500" />
+              Recent Jobs
+            </h3>
+            <div className="bg-white rounded-xl border border-gray-200/80 divide-y divide-gray-100">
               {stats?.recentJobCards?.length === 0 ? (
                 <div className="p-4 text-sm text-gray-400">No recent jobs.</div>
               ) : (
@@ -210,19 +249,3 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({ label, count, color }: { label: string; count: number | string; color: string }) {
-  const colorMap: Record<string, string> = {
-    yellow: 'bg-yellow-50 border-yellow-200 text-yellow-700',
-    blue: 'bg-blue-50 border-blue-200 text-blue-700',
-    indigo: 'bg-indigo-50 border-indigo-200 text-indigo-700',
-    purple: 'bg-purple-50 border-purple-200 text-purple-700',
-    green: 'bg-green-50 border-green-200 text-green-700',
-  };
-
-  return (
-    <div className={`rounded-lg border p-4 text-center ${colorMap[color] || 'bg-gray-50 border-gray-200'}`}>
-      <div className="text-2xl font-bold">{count}</div>
-      <div className="text-xs font-medium mt-1 uppercase tracking-wider">{label}</div>
-    </div>
-  );
-}

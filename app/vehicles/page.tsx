@@ -8,6 +8,7 @@ import { TableSkeleton } from '@/components/Skeleton';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
+import { HiOutlineTruck, HiOutlineMagnifyingGlass, HiOutlinePlusCircle } from 'react-icons/hi2';
 
 export default function VehiclesPage() {
   const { user } = useAuth();
@@ -95,54 +96,66 @@ export default function VehiclesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Vehicle Registry</h2>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-sm">
+              <HiOutlineTruck className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Vehicle Registry</h2>
+              <p className="text-sm text-gray-500">Track all registered vehicles</p>
+            </div>
+          </div>
           <button
             onClick={() => setShowCreate(!showCreate)}
-            className="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:from-cyan-700 hover:to-blue-700 shadow-sm hover:shadow-md transition-all"
           >
-            {showCreate ? 'Cancel' : '+ Register Vehicle'}
+            <HiOutlinePlusCircle className="w-4 h-4" />
+            {showCreate ? 'Cancel' : 'Register Vehicle'}
           </button>
         </div>
 
         {showCreate && (
-          <form onSubmit={handleCreate} className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Register New Vehicle</h3>
+          <form onSubmit={handleCreate} className="bg-white rounded-2xl border border-gray-200/80 p-6 mb-6 shadow-sm">
+            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <HiOutlinePlusCircle className="w-4 h-4 text-cyan-500" />
+              Register New Vehicle
+            </h3>
             <div className="grid gap-4 sm:grid-cols-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Make *</label>
-                <input value={form.make} onChange={(e) => setForm({ ...form, make: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none" placeholder="Toyota" required />
+                <input value={form.make} onChange={(e) => setForm({ ...form, make: e.target.value })} className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none bg-white" placeholder="Toyota" required />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Model *</label>
-                <input value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none" placeholder="Camry" required />
+                <input value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none bg-white" placeholder="Camry" required />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
-                <input value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none" placeholder="2024" type="number" />
+                <input value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value })} className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none bg-white" placeholder="2024" type="number" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Plate Number</label>
-                <input value={form.plateNumber} onChange={(e) => setForm({ ...form, plateNumber: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none" placeholder="AA 12345" />
+                <input value={form.plateNumber} onChange={(e) => setForm({ ...form, plateNumber: e.target.value })} className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none bg-white" placeholder="AA 12345" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">VIN</label>
-                <input value={form.vin} onChange={(e) => setForm({ ...form, vin: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none" placeholder="1HGCM82633A004352" />
+                <input value={form.vin} onChange={(e) => setForm({ ...form, vin: e.target.value })} className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none bg-white" placeholder="1HGCM82633A004352" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Chassis Number</label>
-                <input value={form.chassisNumber} onChange={(e) => setForm({ ...form, chassisNumber: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none" placeholder="CH-123456" />
+                <input value={form.chassisNumber} onChange={(e) => setForm({ ...form, chassisNumber: e.target.value })} className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none bg-white" placeholder="CH-123456" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Mileage (km)</label>
-                <input value={form.mileage} onChange={(e) => setForm({ ...form, mileage: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none" placeholder="15000" type="number" />
+                <input value={form.mileage} onChange={(e) => setForm({ ...form, mileage: e.target.value })} className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none bg-white" placeholder="15000" type="number" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Customer *</label>
-                <select value={form.customerId} onChange={(e) => setForm({ ...form, customerId: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none" required>
+                <select value={form.customerId} onChange={(e) => setForm({ ...form, customerId: e.target.value })} className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none bg-white" required>
                   <option value="">Select customer</option>
                   {customers?.map((c: any) => (
                     <option key={c.id} value={c.id}>{c.name} ({c.phone})</option>
@@ -150,49 +163,51 @@ export default function VehiclesPage() {
                 </select>
               </div>
             </div>
-            <button type="submit" disabled={createMutation.isPending} className="mt-4 bg-primary-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50">
+            <button type="submit" disabled={createMutation.isPending} className="mt-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:from-cyan-700 hover:to-blue-700 disabled:opacity-50 shadow-sm transition-all">
               {createMutation.isPending ? 'Registering...' : 'Register Vehicle'}
             </button>
           </form>
         )}
 
-        <div className="mb-4">
+        <div className="relative mb-4">
+          <HiOutlineMagnifyingGlass className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Search by plate, VIN, chassis, make, model, or customer phone..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-cyan-500 bg-white"
           />
         </div>
 
         {isLoading ? (
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden shadow-sm">
             <TableSkeleton rows={5} cols={6} />
           </div>
         ) : filteredVehicles?.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-            <p className="text-gray-500">No vehicles found.</p>
+          <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300">
+            <HiOutlineTruck className="w-10 h-10 mx-auto text-gray-300 mb-3" />
+            <p className="text-gray-500 font-medium">No vehicles found</p>
           </div>
         ) : (
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden shadow-sm">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50/80">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Plate</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">VIN</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mileage</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Vehicle</th>
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Plate</th>
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">VIN</th>
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Mileage</th>
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Registered</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-100">
                 {filteredVehicles?.map((v: any) => (
-                  <tr key={v.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{v.make} {v.model} {v.year ? `(${v.year})` : ''}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{v.plate_number || '—'}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500 font-mono text-xs">{v.vin || '—'}</td>
+                  <tr key={v.id} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-4 text-sm font-semibold text-gray-900">{v.make} {v.model} {v.year ? `(${v.year})` : ''}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600 font-mono">{v.plate_number || '—'}</td>
+                    <td className="px-6 py-4 text-sm text-gray-400 font-mono text-xs">{v.vin || '—'}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{v.customer_name}<br /><span className="text-xs text-gray-400">{v.customer_phone}</span></td>
                     <td className="px-6 py-4 text-sm text-gray-600">{v.mileage ? `${v.mileage.toLocaleString()} km` : '—'}</td>
                     <td className="px-6 py-4 text-sm text-gray-400">{new Date(v.created_at).toLocaleDateString()}</td>
