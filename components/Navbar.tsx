@@ -1,11 +1,57 @@
 'use client';
 
 import { useAuth } from '@/lib/auth';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { useState } from 'react';
+import {
+  HiOutlineBars3,
+  HiOutlineXMark,
+  HiOutlineHome,
+  HiOutlineTruck,
+  HiOutlineWrenchScrewdriver,
+  HiOutlinePhoto,
+  HiOutlineCube,
+  HiOutlineBell,
+  HiOutlineDocumentText,
+  HiOutlineCalendarDays,
+  HiOutlineChartBarSquare,
+  HiOutlineShieldCheck,
+  HiOutlineArrowRightOnRectangle,
+  HiOutlineUser,
+  HiOutlineBookOpen,
+} from 'react-icons/hi2';
+
+interface NavItem {
+  label: string;
+  href: string;
+  icon: React.ReactNode;
+  roles: string[];
+}
+
+const navItems: NavItem[] = [
+  { label: 'Dashboard', href: '/dashboard', icon: <HiOutlineHome className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager', 'Mechanic'] },
+  { label: 'Vehicles', href: '/vehicles', icon: <HiOutlineTruck className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager', 'Mechanic'] },
+  { label: 'Job Cards', href: '/job-cards', icon: <HiOutlineWrenchScrewdriver className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager', 'Mechanic'] },
+  { label: 'Before/After', href: '/before-after', icon: <HiOutlinePhoto className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager', 'Mechanic'] },
+  { label: 'Inventory', href: '/inventory', icon: <HiOutlineCube className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager', 'Mechanic'] },
+  { label: 'Notifications', href: '/notifications', icon: <HiOutlineBell className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager', 'Mechanic'] },
+  { label: 'Invoices', href: '/invoices', icon: <HiOutlineDocumentText className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager', 'Mechanic'] },
+  { label: 'Appointments', href: '/appointments', icon: <HiOutlineCalendarDays className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager', 'Mechanic'] },
+  { label: 'Reports', href: '/reports', icon: <HiOutlineChartBarSquare className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager', 'Mechanic'] },
+  { label: 'SuperAdmin', href: '/superadmin', icon: <HiOutlineShieldCheck className="w-5 h-5" />, roles: ['SuperAdmin'] },
+];
+
+const customerItems: NavItem[] = [
+  { label: 'My Portal', href: '/portal', icon: <HiOutlineHome className="w-5 h-5" />, roles: ['Customer'] },
+  { label: 'Book Appointment', href: '/portal/book', icon: <HiOutlineCalendarDays className="w-5 h-5" />, roles: ['Customer'] },
+  { label: 'My Vehicles', href: '/portal/vehicles', icon: <HiOutlineTruck className="w-5 h-5" />, roles: ['Customer'] },
+];
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -14,124 +60,100 @@ export default function Navbar() {
 
   if (!user) return null;
 
-  return (
-    <nav className="bg-white border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center gap-6">
-            <h1
-              className="text-xl font-bold text-gray-900 cursor-pointer"
-              onClick={() => router.push('/')}
-            >
-              Ikram Automotive
-            </h1>
-            <div className="hidden sm:flex gap-4">
-              {user.role === 'Customer' ? (
-                <>
-                  <button
-                    onClick={() => router.push('/portal')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    My Portal
-                  </button>
-                  <button
-                    onClick={() => router.push('/portal/book')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Book Appointment
-                  </button>
-                  <button
-                    onClick={() => router.push('/portal/vehicles')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    My Vehicles
-                  </button>
-                </>
-              ) : (
-                <>
-                  {user.role === 'SuperAdmin' && (
-                    <button
-                      onClick={() => router.push('/superadmin')}
-                      className="text-sm font-semibold text-primary-600 hover:text-primary-700"
-                    >
-                      SuperAdmin
-                    </button>
-                  )}
-                  <button
-                    onClick={() => router.push('/dashboard')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Dashboard
-                  </button>
-                  <button
-                    onClick={() => router.push('/vehicles')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Vehicles
-                  </button>
-                  <button
-                    onClick={() => router.push('/job-cards')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Job Cards
-                  </button>
-                  <button
-                    onClick={() => router.push('/before-after')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Before/After
-                  </button>
-                  <button
-                    onClick={() => router.push('/inventory')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Inventory
-                  </button>
-                  <button
-                    onClick={() => router.push('/notifications')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Notifications
-                  </button>
-                  <button
-                    onClick={() => router.push('/invoices')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Invoices
-                  </button>
-                  <button
-                    onClick={() => router.push('/appointments')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Appointments
-                  </button>
-                  <button
-                    onClick={() => router.push('/reports')}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Reports
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
+  const items = user.role === 'Customer' ? customerItems : navItems;
 
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500">
-              {user.name}
-              <span className="ml-2 text-xs px-2 py-0.5 bg-gray-100 rounded-full">
-                {user.role}
-              </span>
-            </span>
+  const sidebarContent = (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+        <h1
+          className="text-lg font-bold text-gray-900 cursor-pointer truncate"
+          onClick={() => router.push('/')}
+        >
+          Ikram Automotive
+        </h1>
+        <button
+          onClick={() => setSidebarOpen(false)}
+          className="lg:hidden p-1 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+        >
+          <HiOutlineXMark className="w-6 h-6" />
+        </button>
+      </div>
+
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+        {items.map((item) => {
+          const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
+          return (
             <button
-              onClick={handleLogout}
-              className="text-sm text-red-500 hover:text-red-700"
+              key={item.href}
+              onClick={() => {
+                router.push(item.href);
+                setSidebarOpen(false);
+              }}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                isActive
+                  ? 'bg-primary-50 text-primary-700'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+              }`}
             >
-              Logout
+              {item.icon}
+              <span>{item.label}</span>
             </button>
+          );
+        })}
+      </nav>
+
+      <div className="border-t border-gray-200 px-4 py-4">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+            <HiOutlineUser className="w-4 h-4 text-primary-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+            <p className="text-xs text-gray-500 truncate">{user.role}</p>
           </div>
         </div>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+        >
+          <HiOutlineArrowRightOnRectangle className="w-4 h-4" />
+          Logout
+        </button>
       </div>
-    </nav>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Mobile hamburger */}
+      <button
+        onClick={() => setSidebarOpen(true)}
+        className="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-lg bg-white border border-gray-200 shadow-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+      >
+        <HiOutlineBars3 className="w-6 h-6" />
+      </button>
+
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-30 bg-black/40 backdrop-blur-sm"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Mobile sidebar (offscreen) */}
+      <div
+        className={`lg:hidden fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 shadow-xl transform transition-transform duration-300 ease-in-out ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {sidebarContent}
+      </div>
+
+      {/* Desktop sidebar (always visible) */}
+      <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 lg:bg-white">
+        {sidebarContent}
+      </aside>
+    </>
   );
 }

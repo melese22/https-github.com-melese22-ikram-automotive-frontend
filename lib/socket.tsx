@@ -37,15 +37,48 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         role: user.role,
       },
       transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 10000,
+      timeout: 20000,
+      autoConnect: true,
+      forceNew: true,
     });
 
-    s.on('connect', () => setConnected(true));
-    s.on('disconnect', () => setConnected(false));
+    s.on('connect', () => {
+      console.log('[Socket] Connected to', backendUrl);
+      setConnected(true);
+    });
+
+    s.on('disconnect', (reason) => {
+      console.log('[Socket] Disconnected:', reason);
+      setConnected(false);
+    });
+
+    s.on('connect_error', (err) => {
+      console.error('[Socket] Connection error:', err.message);
+      const transports = s.io?.opts?.transports as string[] | undefined;
+      if (transports?.includes('websocket')) {
+        s.io.opts.transports = ['polling', 'websocket'] as any;
+      }
+      setConnected(false);
+    });
+
+    s.on('reconnect_attempt', (attempt) => {
+      console.log('[Socket] Reconnect attempt:', attempt);
+    });
+
+    s.on('reconnect', () => {
+      console.log('[Socket] Reconnected');
+      setConnected(true);
+    });
 
     socketRef.current = s;
     setSocket(s);
 
     return () => {
+      s.removeAllListeners();
       s.disconnect();
       socketRef.current = null;
       setSocket(null);

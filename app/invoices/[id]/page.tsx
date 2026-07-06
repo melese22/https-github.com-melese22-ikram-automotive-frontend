@@ -84,7 +84,7 @@ export default function InvoiceDetailPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50/30">
         <Navbar />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <div className="w-full lg:ml-64 px-4 sm:px-6 lg:px-8 py-8 space-y-6">
           <DetailSkeleton />
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function InvoiceDetailPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50/30">
         <Navbar />
-        <div className="max-w-4xl mx-auto px-4 py-8 text-center text-gray-500">Invoice not found.</div>
+        <div className="w-full lg:ml-64 px-4 py-8 text-center text-gray-500">Invoice not found.</div>
       </div>
     );
   }
@@ -106,7 +106,7 @@ export default function InvoiceDetailPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50/30">
       <Navbar />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="w-full lg:ml-64 px-4 sm:px-6 lg:px-8 py-8">
         <button
           onClick={() => router.push('/invoices')}
           className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4 transition-colors"

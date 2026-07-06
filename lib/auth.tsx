@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import api from './api';
+import { normalizePhone } from './phone';
 
 interface User {
   id: string;
@@ -39,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (phone: string, password: string) => {
-    const { data } = await api.post('/auth/login', { phone, password });
+    const { data } = await api.post('/auth/login', { phone: normalizePhone(phone), password });
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     setToken(data.token);
@@ -47,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (registerData: { name: string; phone: string; password: string; email?: string }) => {
-    const { data } = await api.post('/auth/register', registerData);
+    const { data } = await api.post('/auth/register', { ...registerData, phone: normalizePhone(registerData.phone) });
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     setToken(data.token);

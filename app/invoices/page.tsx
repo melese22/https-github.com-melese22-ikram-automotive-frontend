@@ -40,7 +40,7 @@ export default function InvoicesPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <div className="max-w-4xl mx-auto px-4 py-8 text-center text-gray-500">Not available for customers.</div>
+        <div className="w-full lg:ml-64 px-4 py-8 text-center text-gray-500">Not available for customers.</div>
       </div>
     );
   }
@@ -59,7 +59,7 @@ export default function InvoicesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
       <Navbar />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="w-full lg:ml-64 px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-sm">
