@@ -14,7 +14,7 @@ const SocketContext = createContext<SocketContextType>({ socket: null, connected
 export function SocketProvider({ children }: { children: ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -31,10 +31,8 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
     const s = io(backendUrl, {
-      query: {
-        workshopId: user.workshop_id || '',
-        userId: user.id,
-        role: user.role,
+      auth: {
+        token: token,
       },
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -84,7 +82,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       setSocket(null);
       setConnected(false);
     };
-  }, [user]);
+  }, [user, token]);
 
   return (
     <SocketContext.Provider value={{ socket, connected }}>

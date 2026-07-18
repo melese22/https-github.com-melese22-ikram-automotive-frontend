@@ -9,7 +9,7 @@ interface User {
   name: string;
   email: string;
   phone: string;
-  role: 'SuperAdmin' | 'WorkshopManager' | 'Mechanic' | 'Customer';
+  role: 'SuperAdmin' | 'WorkshopManager' | 'Mechanic' | 'Customer' | 'CorporateAdmin';
   workshop_id: string | null;
 }
 

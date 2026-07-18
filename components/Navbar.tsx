@@ -19,6 +19,7 @@ import {
   HiOutlineArrowRightOnRectangle,
   HiOutlineUser,
   HiOutlineBookOpen,
+  HiOutlineUserGroup,
 } from 'react-icons/hi2';
 
 interface NavItem {
@@ -38,6 +39,8 @@ const navItems: NavItem[] = [
   { label: 'Invoices', href: '/invoices', icon: <HiOutlineDocumentText className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager', 'Mechanic'] },
   { label: 'Appointments', href: '/appointments', icon: <HiOutlineCalendarDays className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager', 'Mechanic'] },
   { label: 'Reports', href: '/reports', icon: <HiOutlineChartBarSquare className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager', 'Mechanic'] },
+  { label: 'Team', href: '/dashboard/team', icon: <HiOutlineUserGroup className="w-5 h-5" />, roles: ['SuperAdmin', 'WorkshopManager'] },
+  { label: 'Corporate', href: '/corporate', icon: <HiOutlineBuildingOffice2 className="w-5 h-5" />, roles: ['CorporateAdmin'] },
   { label: 'SuperAdmin', href: '/superadmin', icon: <HiOutlineShieldCheck className="w-5 h-5" />, roles: ['SuperAdmin'] },
 ];
 
